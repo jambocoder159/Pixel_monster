@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>像素怪兽养成游戏 - 原型概览</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1, h2, h3 {
+            text-align: center;
+        }
+        
+        .overview-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .screen {
+            background-color: white;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 10px;
+            height: 500px;
+            overflow: auto;
+            position: relative;
+        }
+        
+        .screen-title {
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        .screen-content {
+            padding: 10px;
+            height: calc(100% - 60px);
+            overflow: auto;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .btn:hover {
+            background-color: #555;
+        }
+        
+        .monster-display {
+            text-align: center;
+            margin: 10px 0;
+            height: 150px;
+        }
+        
+        .monster-display svg {
+            max-height: 100%;
+            max-width: 100%;
+        }
+        
+        .monster-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .monster-item {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: center;
+            height: 120px;
+            cursor: pointer;
+        }
+        
+        .monster-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .monster-item svg {
+            height: 80px;
+            width: 100%;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            background-color: #ddd;
+            height: 15px;
+            margin: 10px 0;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #333;
+        }
+        
+        .battle-arena {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+        
+        .battle-monster {
+            width: 45%;
+            text-align: center;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            background-color: #333;
+            padding: 10px 0;
+            margin-top: 10px;
+        }
+        
+        .nav-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .nav-btn:hover {
+            text-decoration: underline;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            max-width: 300px;
+            text-align: center;
+        }
+        
+        /* 控制面板 */
+        .control-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        
+        .control-panel select {
+            margin-right: 10px;
+            padding: 5px;
+        }
+        
+        /* 预览模式样式 */
+        .preview-mode .screen {
+            display: block !important;
+            width: 300px;
+            height: 450px;
+            margin: 10px;
+            float: left;
+            transform: scale(0.8);
+            transform-origin: top left;
+        }
+        
+        .preview-mode .overview-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            max-width: 100%;
+        }
+        
+        .preview-mode-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .preview-mode-btn:hover {
+            background-color: #555;
+        }
+        
+        .preview-mode h1 {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>像素怪兽养成游戏 - 用户流程原型概览</h1>
+    
+    <div class="preview-mode-btn" onclick="togglePreviewMode()">预览模式</div>
+    
+    <div class="overview-container">
+        <!-- 登录页面 -->
+        <div class="screen" id="login-screen">
+            <h3 class="screen-title">登录页面</h3>
+            <div class="screen-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <div style="margin-bottom: 30px; text-align: center;">
+                    <svg width="100" height="100" viewBox="0 0 32 32">
+                        <rect width="32" height="32" fill="white"/>
+                        <g id="pixel-egg">
+                            <rect x="14" y="8" width="4" height="4" fill="black"/>
+                            <rect x="12" y="12" width="8" height="8" fill="black"/>
+                            <rect x="10" y="20" width="12" height="4" fill="black"/>
+                        </g>
+                    </svg>
+                    <h3>像素怪兽</h3>
+                </div>
+                <button class="btn" onclick="showWalletConnectModal()">连接钱包</button>
+            </div>
+        </div>
+        
+        <!-- 钱包连接模态框 -->
+        <div class="modal" id="wallet-connect-modal">
+            <div class="modal-content">
+                <h3>选择钱包</h3>
+                <button class="btn" onclick="connectWallet('metamask')">MetaMask</button>
+                <button class="btn" onclick="connectWallet('walletconnect')">WalletConnect</button>
+                <button class="btn" onclick="connectWallet('coinbase')">Coinbase Wallet</button>
+                <button class="btn" onclick="closeModal('wallet-connect-modal')">取消</button>
+            </div>
+        </div>
+        
+        <!-- 主页 -->
+        <div class="screen" id="home-screen" style="display: none;">
+            <h3 class="screen-title">怪兽详情</h3>
+            <div class="screen-content">
+                <div class="monster-display">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                        <rect width="256" height="256" fill="#f5f5f5" />
+                        <g id="monster">
+                            <rect x="96" y="96" width="64" height="64" fill="#333333" />
+                            <rect x="88" y="104" width="8" height="48" fill="#333333" />
+                            <rect x="160" y="104" width="8" height="48" fill="#333333" />
+                            <rect x="112" y="112" width="16" height="16" fill="white" />
+                            <rect x="128" y="112" width="16" height="16" fill="white" />
+                            <rect x="116" y="116" width="8" height="8" fill="black" />
+                            <rect x="132" y="116" width="8" height="8" fill="black" />
+                            <rect x="120" y="136" width="16" height="8" fill="white" />
+                            <rect x="104" y="160" width="16" height="8" fill="#111111" />
+                            <rect x="136" y="160" width="16" height="8" fill="#111111" />
+                        </g>
+                    </svg>
+                </div>
+                <div style="text-align: center;">
+                    <p><strong>怪兽名称:</strong> 像素兽</p>
+                    <p><strong>等级:</strong> 1</p>
+                    <p><strong>状态:</strong> 健康</p>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <button class="btn" onclick="showScreen('feed-screen')">喂食</button>
+                    <button class="btn" onclick="showScreen('train-screen')">训练</button>
+                    <button class="btn" onclick="showScreen('evolve-screen')">进化</button>
+                    <button class="btn" onclick="showScreen('collection-screen')">返回</button>
+                </div>
+                <div class="navbar">
+                    <a class="nav-btn" onclick="showScreen('collection-screen')">我的怪兽</a>
+                    <a class="nav-btn" onclick="showScreen('battle-select-screen')">对战</a>
+                    <a class="nav-btn" onclick="showScreen('shop-screen')">商店</a>
+                    <a class="nav-btn" onclick="showScreen('wallet-screen')">钱包</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 收藏页面 -->
+        <div class="screen" id="collection-screen" style="display: none;">
+            <h3 class="screen-title">我的怪兽</h3>
+            <div class="screen-content">
+                <div class="monster-list">
+                    <!-- 怪兽1 -->
+                    <div class="monster-item" onclick="selectMonster('pixel-monster')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" height="80">
+                            <rect width="256" height="256" fill="#f5f5f5" />
+                            <g>
+                                <rect x="96" y="96" width="64" height="64" fill="#333333" />
+                                <rect x="112" y="112" width="16" height="16" fill="white" />
+                                <rect x="128" y="112" width="16" height="16" fill="white" />
+                                <rect x="116" y="116" width="8" height="8" fill="black" />
+                                <rect x="132" y="116" width="8" height="8" fill="black" />
+                                <rect x="120" y="136" width="16" height="8" fill="white" />
+                            </g>
+                        </svg>
+                        <p>像素兽 Lv.1</p>
+                    </div>
+                    
+                    <!-- 怪兽2 -->
+                    <div class="monster-item" onclick="selectMonster('rare-monster')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" height="80">
+                            <rect width="256" height="256" fill="#f0f0f0" />
+                            <g>
+                                <rect x="88" y="80" width="80" height="72" fill="#222222" />
+                                <rect x="104" y="96" width="24" height="16" fill="white" />
+                                <rect x="128" y="96" width="24" height="16" fill="white" />
+                                <rect x="112" y="100" width="8" height="8" fill="black" />
+                                <rect x="136" y="100" width="8" height="8" fill="black" />
+                                <rect x="112" y="120" width="32" height="8" fill="white" />
+                            </g>
+                        </svg>
+                        <p>稀有兽 Lv.2</p>
+                    </div>
+                    
+                    <!-- 蛋1 -->
+                    <div class="monster-item" onclick="showScreen('hatch-screen')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" height="80">
+                            <rect width="32" height="32" fill="white"/>
+                            <g>
+                                <rect x="14" y="8" width="4" height="4" fill="black"/>
+                                <rect x="12" y="12" width="8" height="8" fill="black"/>
+                                <rect x="10" y="20" width="12" height="4" fill="black"/>
+                            </g>
+                        </svg>
+                        <p>神秘蛋 #1</p>
+                    </div>
+                    
+                    <!-- 蛋2 -->
+                    <div class="monster-item" onclick="showScreen('identify-screen')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" height="80">
+                            <rect width="32" height="32" fill="white"/>
+                            <g>
+                                <rect x="14" y="8" width="4" height="4" fill="black"/>
+                                <rect x="12" y="12" width="8" height="8" fill="black"/>
+                                <rect x="10" y="20" width="12" height="4" fill="black"/>
+                                <rect x="16" y="14" width="2" height="2" fill="white"/>
+                            </g>
+                        </svg>
+                        <p>神秘蛋 #2</p>
+                    </div>
+                </div>
+                <div class="navbar">
+                    <a class="nav-btn" onclick="showScreen('collection-screen')">我的怪兽</a>
+                    <a class="nav-btn" onclick="showScreen('battle-select-screen')">对战</a>
+                    <a class="nav-btn" onclick="showScreen('shop-screen')">商店</a>
+                    <a class="nav-btn" onclick="showScreen('wallet-screen')">钱包</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 孵化页面 -->
+        <div class="screen" id="hatch-screen" style="display: none;">
+            <h3 class="screen-title">孵化页面</h3>
+            <div class="screen-content">
+                <div class="monster-display">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                        <rect width="32" height="32" fill="white"/>
+                        <g id="hatching-egg">
+                            <rect x="14" y="8" width="4" height="4" fill="black"/>
+                            <rect x="12" y="12" width="8" height="8" fill="black"/>
+                            <rect x="10" y="20" width="12" height="4" fill="black"/>
+                            <rect x="16" y="14" width="2" height="2" fill="white"/>
+                            
+                            <!-- 孵化动画 -->
+                            <animateTransform 
+                              attributeName="transform" 
+                              attributeType="XML" 
+                              type="translate" 
+                              values="0,0; 0,-2; 0,0; 0,1; 0,0" 
+                              dur="0.8s" 
+                              repeatCount="indefinite" />
+                        </g>
+                    </svg>
+                </div>
+                <div style="text-align: center;">
+                    <p>孵化进度: <span id="hatch-progress">45</span>%</p>
+                    <div class="progress-bar">
+                        <div id="hatch-bar" class="progress" style="width: 45%;"></div>
+                    </div>
+                    <p>预计剩余时间: <span id="hatch-time">2小时15分钟</span></p>
+                    <button class="btn" onclick="increaseHatchProgress()">加速孵化</button>
+                    <button class="btn" onclick="showScreen('collection-screen')">返回</button>
+                </div>
+                <div class="navbar">
+                    <a class="nav-btn" onclick="showScreen('collection-screen')">我的怪兽</a>
+                    <a class="nav-btn" onclick="showScreen('battle-select-screen')">对战</a>
+                    <a class="nav-btn" onclick="showScreen('shop-screen')">商店</a>
+                    <a class="nav-btn" onclick="showScreen('wallet-screen')">钱包</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 喂食页面 -->
+        <div class="screen" id="feed-screen" style="display: none;">
+            <h3 class="screen-title">喂食页面</h3>
+            <div class="screen-content">
+                <div class="monster-display">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                        <rect width="256" height="256" fill="#f5f5f5" />
+                        <g>
+                            <rect x="96" y="96" width="64" height="64" fill="#333333" />
+                            <rect x="88" y="104" width="8" height="48" fill="#333333" />
+                            <rect x="160" y="104" width="8" height="48" fill="#333333" />
+                            <rect x="112" y="112" width="16" height="16" fill="white" />
+                            <rect x="128" y="112" width="16" height="16" fill="white" />
+                            <rect x="116" y="116" width="8" height="8" fill="black" />
+                            <rect x="132" y="116" width="8" height="8" fill="black" />
+                            <rect x="120" y="136" width="16" height="12" fill="white" />
+                            
+                            <!-- 动画：嘴巴动作 -->
+                            <animate 
+                              attributeName="transform" 
+                              attributeType="XML" 
+                              type="translate" 
+                              values="0,0; 0,-5; 0,0" 
+                              dur="1s" 
+                              repeatCount="indefinite" />
+                        </g>
+                    </svg>
+                </div>
+                <div style="text-align: center;">
+                    <p>饥饿度: <span id="hunger-level">65</span>%</p>
+                    <div class="progress-bar">
+                        <div id="hunger-bar" class="progress" style="width: 65%;"></div>
+                    </div>
+                    <p>可用食物:</p>
+                    <button class="btn" onclick="feedMonster('basic')">基础食物 x5</button>
+                    <button class="btn" onclick="feedMonster('premium')">高级食物 x2</button>
+                    <button class="btn" onclick="showScreen('home-screen')">返回</button>
+                </div>
+                <div class="navbar">
+                    <a class="nav-btn" onclick="showScreen('collection-screen')">我的怪兽</a>
+                    <a class="nav-btn" onclick="showScreen('battle-select-screen')">对战</a>
+                    <a class="nav-btn" onclick="showScreen('shop-screen')">商店</a>
+                    <a class="nav-btn" onclick="showScreen('wallet-screen')">钱包</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 训练页面 -->
+        <div class="screen" id="train-screen" style="display: none;">
+            <h3 class="screen-title">训练页面</h3>
+            <div class="screen-content">
+                <div class="monster-display">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                        <rect width="256" height="256" fill="#f5f5f5" />
+                        <g id="training-monster">
+                            <rect x="96" y="96" width="64" height="64" fill="#333333" />
+                            <rect x="88" y="104" width="8" height="48" fill="#333333" />
+                            <rect x="160" y="104" width="8" height="48" fill="#333333" />
+                            <rect x="112" y="112" width="16" height="16" fill="white" />
+                            <rect x="128" y="112" width="16" height="16" fill="white" />
+                            <rect x="116" y="116" width="8" height="8" fill="black" />
+                            <rect x="132" y="116" width="8" height="8" fill="black" />
+                            <rect x="120" y="136" width="16" height="8" fill="white" />
+                            
+                            <!-- 动画：训练动作 -->
+                            <animateTransform 
+                              attributeName="transform" 
+                              attributeType="XML" 
+                              type="rotate" 
+                              values="0 128 128; 5 128 128; 0 128 128; -5 128 128; 0 128 128" 
+                              dur="0.5s" 
+                              repeatCount="indefinite" />
+                        </g>
+                    </svg>
+                </div>
+                <div style="text-align: center;">
+                    <p>训练项目:</p>
+                    <button class="btn" onclick="trainMonster('speed')">速度训练</button>
+                    <button class="btn" onclick="trainMonster('strength')">力量训练</button>
+                    <button class="btn" onclick="trainMonster('defense')">防御训练</button>
+                    <p>训练进度:</p>
+                    <div class="progress-bar">
+                        <div id="train-progress" class="progress" style="width: 0%;"></div>
+                    </div>
+                    <button class="btn" onclick="showScreen('home-screen')">返回</button>
+                </div>
+                <div class="navbar">
+                    <a class="nav-btn" onclick="showScreen('collection-screen')">我的怪兽</a>
+                    <a class="nav-btn" onclick="showScreen('battle-select-screen')">对战</a>
+                    <a class="nav-btn" onclick="showScreen('shop-screen')">商店</a>
+                    <a class="nav-btn" onclick="showScreen('wallet-screen')">钱包</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 进化页面 -->
+        <div class="screen" id="evolve-screen" style="display: none;">
+            <h3 class="screen-title">进化页面</h3>
+            <div class="screen-content">
+                <div class="monster-display">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                        <rect width="256" height="256" fill="#f5f5f5" />
+                        <g>
+                            <rect x="96" y="96" width="64" height="64" fill="#333333" />
+                            <rect x="88" y="104" width="8" height="48" fill="#333333" />
+                            <rect x="160" y="104" width="8" height="48" fill="#333333" />
+                            <rect x="112" y="112" width="16" height="16" fill="white" />
+                            <rect x="128" y="112" width="16" height="16" fill="white" />
+                            <rect x="116" y="116" width="8" height="8" fill="black" />
+                            <rect x="132" y="116" width="8" height="8" fill="black" />
+                            <rect x="120" y="136" width="16" height="8" fill="white" />
+                            
+                            <!-- 进化光效 -->
+                            <animate 
+                              attributeName="opacity" 
+                              values="1;0.5;1" 
+                              dur="1s" 
+                              repeatCount="indefinite" />
+                        </g>
+                    </svg>
+                </div>
+                <div style="text-align: center;">
+                    <p>进化条件:</p>
+                    <ul style="list-style-type: none; padding: 0; text-align: left; margin-left: 20px;">
+                        <li>✓ 等级达到10级</li>
+                        <li>✓ 完成特殊训练</li>
+                        <li>✗ 需要进化石 (缺少)</li>
+                    </ul>
+                    <button class="btn" onclick="showEvolutionModal()">开始进化</button>
+                    <button class="btn" onclick="showScreen('home-screen')">返回</button>
+                </div>
+                <div class="navbar">
+                    <a class="nav-btn" onclick="showScreen('collection-screen')">我的怪兽</a>
+                    <a class="nav-btn" onclick="showScreen('battle-select-screen')">对战</a>
+                    <a class="nav-btn" onclick="showScreen('shop-screen')">商店</a>
+                    <a class="nav-btn" onclick="showScreen('wallet-screen')">钱包</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 对战页面 -->
+        <div class="screen" id="battle-screen" style="display: none;">
+            <h3 class="screen-title">对战页面</h3>
+            <div class="screen-content">
+                <div class="battle-arena">
+                    <div class="battle-monster">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="70">
+                            <rect width="256" height="256" fill="transparent" />
+                            <g>
+                                <rect x="96" y="96" width="64" height="64" fill="#333333" />
+                                <rect x="112" y="112" width="16" height="16" fill="white" />
+                                <rect x="128" y="112" width="16" height="16" fill="white" />
+                                <rect x="116" y="116" width="8" height="8" fill="black" />
+                                <rect x="132" y="116" width="8" height="8" fill="black" />
+                                <rect x="120" y="136" width="16" height="8" fill="white" />
+                                
+                                <!-- 战斗动画 -->
+                                <animateTransform 
+                                  attributeName="transform" 
+                                  attributeType="XML" 
+                                  type="translate" 
+                                  values="0,0; 5,0; 0,0; -5,0; 0,0" 
+                                  dur="0.5s" 
+                                  repeatCount="indefinite" />
+                            </g>
+                        </svg>
+                        <p>像素兽 Lv.1</p>
+                        <div class="progress-bar">
+                            <div id="my-hp" class="progress" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="align-self: center; font-size: 18px; font-weight: bold;">VS</div>
+                    
+                    <div class="battle-monster">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="70">
+                            <rect width="256" height="256" fill="transparent" />
+                            <g>
+                                <rect x="88" y="80" width="80" height="72" fill="#222222" />
+                                <rect x="104" y="96" width="24" height="16" fill="white" />
+                                <rect x="128" y="96" width="24" height="16" fill="white" />
+                                <rect x="112" y="100" width="8" height="8" fill="black" />
+                                <rect x="136" y="100" width="8" height="8" fill="black" />
+                                <rect x="112" y="120" width="32" height="8" fill="white" />
+                                
+                                <!-- 战斗动画 -->
+                                <animateTransform 
+                                  attributeName="transform" 
+                                  attributeType="XML" 
+                                  type="translate" 
+                                  values="0,0; -5,0; 0,0; 5,0; 0,0" 
+                                  dur="0.5s" 
+                                  repeatCount="indefinite" />
+                            </g>
+                        </svg>
+                        <p>野生稀有兽 Lv.2</p>
+                        <div class="progress-bar">
+                            <div id="enemy-hp" class="progress" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 10px;">
+                    <p>选择攻击:</p>
+                    <button class="btn" onclick="attack('normal')">普通攻击</button>
+                    <button class="btn" onclick="attack('special')">特殊攻击</button>
+                    <button class="btn" onclick="attack('defense')">防御</button>
+                    <div id="battle-log" style="margin-top: 10px; height: 60px; overflow-y: auto; border: 1px solid #ddd; padding: 5px; font-size: 12px;">
+                        <p>战斗开始！</p>
+                    </div>
+                    <button class="btn" onclick="showScreen('battle-select-screen')">逃跑</button>
+                </div>
+                <div class="navbar">
+                    <a class="nav-btn" onclick="showScreen('collection-screen')">我的怪兽</a>
+                    <a class="nav-btn" onclick="showScreen('battle-select-screen')">对战</a>
+                    <a class="nav-btn" onclick="showScreen('shop-screen')">商店</a>
+                    <a class="nav-btn" onclick="showScreen('wallet-screen')">钱包</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 对战选择页面 -->
+        <div class="screen" id="battle-select-screen" style="display: none;">
+            <h3 class="screen-title">对战选择页面</h3>
+            <div class="screen-content">
+                <div class="monster-list">
+                    <!-- 对手1 -->
+                    <div class="monster-item" onclick="showScreen('battle-screen')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" height="70">
+                            <rect width="256" height="256" fill="transparent" />
+                            <g>
+                                <rect x="96" y="96" width="64" height="64" fill="#555555" />
+                                <rect x="112" y="112" width="16" height="16" fill="white" />
+                                <rect x="128" y="112" width="16" height="16" fill="white" />
+                                <rect x="116" y="116" width="8" height="8" fill="black" />
+                                <rect x="132" y="116" width="8" height="8" fill="black" />
+                                <rect x="120" y="136" width="16" height="8" fill="white" />
+                            </g>
+                        </svg>
+                        <p>野生怪兽 Lv.1</p>
+                        <p>难度: 简单</p>
+                    </div>
+                    
+                    <!-- 对手2 -->
+                    <div class="monster-item" onclick="showScreen('battle-screen')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" height="70">
+                            <rect width="256" height="256" fill="transparent" />
+                            <g>
+                                <rect x="88" y="80" width="80" height="72" fill="#444444" />
+                                <rect x="104" y="96" width="24" height="16" fill="white" />
+                                <rect x="128" y="96" width="24" height="16" fill="white" />
+                                <rect x="112" y="100" width="8" height="8" fill="black" />
+                                <rect x="136" y="100" width="8" height="8" fill="black" />
+                                <rect x="112" y="120" width="32" height="8" fill="white" />
+                            </g>
+                        </svg>
+                        <p>野生怪兽 Lv.2</p>
+                        <p>难度: 中等</p>
+                    </div>
+                    
+                    <!-- 对手3 -->
+                    <div class="monster-item" onclick="showScreen('battle-screen')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" height="70">
+                            <rect width="256" height="256" fill="transparent" />
+                            <g>
+                                <rect x="88" y="80" width="80" height="72" fill="#333333" />
+                                <rect x="104" y="96" width="24" height="16" fill="white" />
+                                <rect x="128" y="96" width="24" height="16" fill="white" />
+                                <rect x="112" y="100" width="8" height="8" fill="black" />
+                                <rect x="136" y="100" width="8" height="8" fill="black" />
+                                <rect x="112" y="120" width="32" height="8" fill="white" />
+                            </g>
+                        </svg>
+                        <p>野生怪兽 Lv.3</p>
+                        <p>难度: 困难</p>
+                    </div>
+                </div>
+                <div class="navbar">
+                    <a class="nav-btn" onclick="showScreen('collection-screen')">我的怪兽</a>
+                    <a class="nav-btn" onclick="showScreen('battle-select-screen')">对战</a>
+                    <a class="nav-btn" onclick="showScreen('shop-screen')">商店</a>
+                    <a class="nav-btn" onclick="showScreen('wallet-screen')">钱包</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 鉴定页面 -->
+        <div class="screen" id="identify-screen" style="display: none;">
+            <h3 class="screen-title">鉴定页面</h3>
+            <div class="screen-content">
+                <div class="monster-display">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                        <rect width="32" height="32" fill="white"/>
+                        <g id="identify-egg">
+                            <rect x="14" y="8" width="4" height="4" fill="black"/>
+                            <rect x="12" y="12" width="8" height="8" fill="black"/>
+                            <rect x="10" y="20" width="12" height="4" fill="black"/>
+                            <rect x="16" y="14" width="2" height="2" fill="white"/>
+                            <rect x="14" y="16" width="2" height="2" fill="white"/>
+                            
+                            <!-- 鉴定动画 -->
+                            <animate 
+                              attributeName="opacity" 
+                              values="1;0.5;1" 
+                              dur="1s" 
+                              repeatCount="indefinite" />
+                        </g>
+                    </svg>
+                </div>
+                <div style="text-align: center;">
+                    <p>鉴定进度:</p>
+                    <div class="progress-bar">
+                        <div id="identify-progress" class="progress" style="width: 60%;"></div>
+                    </div>
+                    <div id="identify-result">
+                        <p><strong>初步鉴定结果:</strong></p>
+                        <p>稀有度: ★★★☆☆</p>
+                        <p>属性: 未知</p>
+                    </div>
+                    <button class="btn" onclick="completeIdentification()">完成鉴定</button>
+                    <button class="btn" onclick="showScreen('collection-screen')">返回</button>
+                </div>
+                <div class="navbar">
+                    <a class="nav-btn" onclick="showScreen('collection-screen')">我的怪兽</a>
+                    <a class="nav-btn" onclick="showScreen('battle-select-screen')">对战</a>
+                    <a class="nav-btn" onclick="showScreen('shop-screen')">商店</a>
+                    <a class="nav-btn" onclick="showScreen('wallet-screen')">钱包</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 商店页面 -->
+        <div class="screen" id="shop-screen" style="display: none;">
+            <h3 class="screen-title">商店页面</h3>
+            <div class="screen-content">
+                <div style="text-align: right; margin-bottom: 10px;">
+                    <p>像素币: <span id="pixel-coin-balance">150</span></p>
+                    <p>ETH: <span id="eth-balance">0.05</span></p>
+                </div>
+                <div class="monster-list">
+                    <!-- 商品1 -->
+                    <div class="monster-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" height="60">
+                            <rect width="32" height="32" fill="transparent"/>
+                            <g>
+                                <rect x="12" y="8" width="8" height="4" fill="black"/>
+                                <rect x="8" y="12" width="16" height="12" fill="black"/>
+                                <rect x="12" y="16" width="8" height="4" fill="white"/>
+                            </g>
+                        </svg>
+                        <p>基础食物包</p>
+                        <p>价格: 50像素币</p>
+                        <button class="btn" style="font-size: 12px;" onclick="alert('购买成功！')">购买</button>
+                    </div>
+                    
+                    <!-- 商品2 -->
+                    <div class="monster-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" height="60">
+                            <rect width="32" height="32" fill="transparent"/>
+                            <g>
+                                <rect x="12" y="8" width="8" height="4" fill="black"/>
+                                <rect x="8" y="12" width="16" height="12" fill="black"/>
+                                <rect x="12" y="16" width="8" height="4" fill="white"/>
+                                <rect x="14" y="14" width="4" height="2" fill="gold"/>
+                            </g>
+                        </svg>
+                        <p>高级食物包</p>
+                        <p>价格: 100像素币</p>
+                        <button class="btn" style="font-size: 12px;" onclick="alert('购买成功！')">购买</button>
+                    </div>
+                    
+                    <!-- 商品3 -->
+                    <div class="monster-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" height="60">
+                            <rect width="32" height="32" fill="transparent"/>
+                            <g>
+                                <polygon points="16,8 20,16 16,24 12,16" fill="black"/>
+                                <rect x="14" y="14" width="4" height="4" fill="white"/>
+                            </g>
+                        </svg>
+                        <p>进化石</p>
+                        <p>价格: 200像素币</p>
+                        <button class="btn" style="font-size: 12px;" onclick="alert('像素币不足！')">购买</button>
+                    </div>
+                </div>
+                <div class="navbar">
+                    <a class="nav-btn" onclick="showScreen('collection-screen')">我的怪兽</a>
+                    <a class="nav-btn" onclick="showScreen('battle-select-screen')">对战</a>
+                    <a class="nav-btn" onclick="showScreen('shop-screen')">商店</a>
+                    <a class="nav-btn" onclick="showScreen('wallet-screen')">钱包</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 钱包页面 -->
+        <div class="screen" id="wallet-screen" style="display: none;">
+            <h3 class="screen-title">钱包页面</h3>
+            <div class="screen-content">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <svg width="60" height="60" viewBox="0 0 32 32">
+                        <rect width="32" height="32" fill="#f5f5f5"/>
+                        <g>
+                            <rect x="8" y="8" width="16" height="16" fill="#333"/>
+                            <rect x="10" y="10" width="12" height="12" fill="#f5f5f5"/>
+                            <rect x="12" y="12" width="8" height="8" fill="#333"/>
+                        </g>
+                    </svg>
+                    <p><strong>钱包地址:</strong> <span id="wallet-address">0x71C...F3E2</span></p>
+                    <button class="btn" onclick="copyWalletAddress()">复制地址</button>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4>资产</h4>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>ETH</span>
+                        <span id="wallet-eth-balance">0.05</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>像素币 (PXC)</span>
+                        <span id="wallet-pixel-balance">150</span>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4>NFT 资产</h4>
+                    <div class="monster-list" style="margin-bottom: 10px;">
+                        <div class="monster-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" height="60">
+                                <rect width="256" height="256" fill="#f5f5f5" />
+                                <g>
+                                    <rect x="96" y="96" width="64" height="64" fill="#333333" />
+                                    <rect x="112" y="112" width="16" height="16" fill="white" />
+                                    <rect x="128" y="112" width="16" height="16" fill="white" />
+                                    <rect x="116" y="116" width="8" height="8" fill="black" />
+                                    <rect x="132" y="116" width="8" height="8" fill="black" />
+                                    <rect x="120" y="136" width="16" height="8" fill="white" />
+                                </g>
+                            </svg>
+                            <p>像素兽 #001</p>
+                            <p>稀有度: ★★☆☆☆</p>
+                        </div>
+                        <div class="monster-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" height="60">
+                                <rect width="256" height="256" fill="#f0f0f0" />
+                                <g>
+                                    <rect x="88" y="80" width="80" height="72" fill="#222222" />
+                                    <rect x="104" y="96" width="24" height="16" fill="white" />
+                                    <rect x="128" y="96" width="24" height="16" fill="white" />
+                                    <rect x="112" y="100" width="8" height="8" fill="black" />
+                                    <rect x="136" y="100" width="8" height="8" fill="black" />
+                                    <rect x="112" y="120" width="32" height="8" fill="white" />
+                                </g>
+                            </svg>
+                            <p>稀有兽 #042</p>
+                            <p>稀有度: ★★★★☆</p>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="showScreen('mint-screen')">铸造新怪兽</button>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4>交易历史</h4>
+                    <div style="font-size: 12px; max-height: 100px; overflow-y: auto; border: 1px solid #ddd; padding: 5px;">
+                        <p>2023-06-15: 铸造像素兽 #001 (-0.01 ETH)</p>
+                        <p>2023-06-20: 获得像素币奖励 (+50 PXC)</p>
+                        <p>2023-06-25: 铸造稀有兽 #042 (-0.02 ETH)</p>
+                    </div>
+                </div>
+                
+                <div class="navbar">
+                    <a class="nav-btn" onclick="showScreen('collection-screen')">我的怪兽</a>
+                    <a class="nav-btn" onclick="showScreen('battle-select-screen')">对战</a>
+                    <a class="nav-btn" onclick="showScreen('shop-screen')">商店</a>
+                    <a class="nav-btn" onclick="showScreen('wallet-screen')">钱包</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- NFT 铸造页面 -->
+        <div class="screen" id="mint-screen" style="display: none;">
+            <h3 class="screen-title">铸造新怪兽</h3>
+            <div class="screen-content">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <p>选择铸造方式:</p>
+                    <div style="display: flex; justify-content: space-around; margin: 20px 0;">
+                        <div onclick="selectMintOption('random')" id="random-mint" class="monster-item" style="cursor: pointer; border: 2px solid #333;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" height="60">
+                                <rect width="32" height="32" fill="white"/>
+                                <g>
+                                    <rect x="14" y="8" width="4" height="4" fill="black"/>
+                                    <rect x="12" y="12" width="8" height="8" fill="black"/>
+                                    <rect x="10" y="20" width="12" height="4" fill="black"/>
+                                    <rect x="16" y="14" width="2" height="2" fill="white"/>
+                                </g>
+                            </svg>
+                            <p>随机铸造</p>
+                            <p>价格: 0.01 ETH</p>
+                        </div>
+                        <div onclick="selectMintOption('premium')" id="premium-mint" class="monster-item" style="cursor: pointer;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" height="60">
+                                <rect width="32" height="32" fill="white"/>
+                                <g>
+                                    <rect x="14" y="8" width="4" height="4" fill="black"/>
+                                    <rect x="12" y="12" width="8" height="8" fill="black"/>
+                                    <rect x="10" y="20" width="12" height="4" fill="black"/>
+                                    <rect x="14" y="14" width="4" height="4" fill="gold"/>
+                                </g>
+                            </svg>
+                            <p>高级铸造</p>
+                            <p>价格: 0.05 ETH</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <p>铸造数量:</p>
+                    <div style="display: flex; justify-content: center; align-items: center; margin: 10px 0;">
+                        <button class="btn" onclick="decreaseMintAmount()">-</button>
+                        <span id="mint-amount" style="margin: 0 20px;">1</span>
+                        <button class="btn" onclick="increaseMintAmount()">+</button>
+                    </div>
+                    <p>总价: <span id="mint-total-price">0.01</span> ETH</p>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="btn" onclick="startMintProcess()">开始铸造</button>
+                    <button class="btn" onclick="showScreen('wallet-screen')">返回</button>
+                </div>
+                <div class="navbar">
+                    <a class="nav-btn" onclick="showScreen('collection-screen')">我的怪兽</a>
+                    <a class="nav-btn" onclick="showScreen('battle-select-screen')">对战</a>
+                    <a class="nav-btn" onclick="showScreen('shop-screen')">商店</a>
+                    <a class="nav-btn" onclick="showScreen('wallet-screen')">钱包</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 铸造进行中页面 -->
+        <div class="screen" id="minting-screen" style="display: none;">
+            <h3 class="screen-title">铸造进行中</h3>
+            <div class="screen-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <div class="monster-display">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                        <rect width="32" height="32" fill="white"/>
+                        <g id="minting-animation">
+                            <rect x="14" y="8" width="4" height="4" fill="black"/>
+                            <rect x="12" y="12" width="8" height="8" fill="black"/>
+                            <rect x="10" y="20" width="12" height="4" fill="black"/>
+                            
+                            <!-- 铸造动画 -->
+                            <animate 
+                              attributeName="opacity" 
+                              values="1;0.2;1" 
+                              dur="1s" 
+                              repeatCount="indefinite" />
+                            <animateTransform 
+                              attributeName="transform" 
+                              attributeType="XML" 
+                              type="rotate" 
+                              values="0 16 16; 360 16 16" 
+                              dur="2s" 
+                              repeatCount="indefinite" />
+                        </g>
+                    </svg>
+                </div>
+                <p>正在铸造您的怪兽 NFT...</p>
+                <p>请不要关闭页面</p>
+                <div class="progress-bar" style="width: 80%;">
+                    <div id="mint-progress" class="progress" style="width: 60%;"></div>
+                </div>
+                <p>交易确认中: <span id="confirmation-count">1</span>/3</p>
+            </div>
+        </div>
+        
+        <!-- 铸造成功页面 -->
+        <div class="screen" id="mint-success-screen" style="display: none;">
+            <h3 class="screen-title">铸造成功</h3>
+            <div class="screen-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <div class="monster-display">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                        <rect width="256" height="256" fill="#f5f5f5" />
+                        <g>
+                            <rect x="88" y="80" width="80" height="72" fill="#222222" />
+                            <rect x="104" y="96" width="24" height="16" fill="white" />
+                            <rect x="128" y="96" width="24" height="16" fill="white" />
+                            <rect x="112" y="100" width="8" height="8" fill="black" />
+                            <rect x="136" y="100" width="8" height="8" fill="black" />
+                            <rect x="112" y="120" width="32" height="8" fill="white" />
+                            <rect x="80" y="88" width="8" height="24" fill="#222222" />
+                            <rect x="168" y="88" width="8" height="24" fill="#222222" />
+                        </g>
+                    </svg>
+                </div>
+                <h3>恭喜！</h3>
+                <p>您成功铸造了一只稀有怪兽！</p>
+                <div style="text-align: left; margin: 10px 0; padding: 10px; background-color: #f0f0f0; border-radius: 5px;">
+                    <p><strong>怪兽名称:</strong> 暗影兽 #108</p>
+                    <p><strong>稀有度:</strong> ★★★★☆</p>
+                    <p><strong>属性:</strong> 暗影系</p>
+                    <p><strong>特殊能力:</strong> 隐身</p>
+                    <p><strong>交易哈希:</strong> 0x71C...F3E2</p>
+                </div>
+                <div style="display: flex; justify-content: space-around; width: 100%; margin-top: 20px;">
+                    <button class="btn" onclick="showScreen('collection-screen')">查看收藏</button>
+                    <button class="btn" onclick="showScreen('mint-screen')">继续铸造</button>
+                </div>
+                <div class="navbar">
+                    <a class="nav-btn" onclick="showScreen('collection-screen')">我的怪兽</a>
+                    <a class="nav-btn" onclick="showScreen('battle-select-screen')">对战</a>
+                    <a class="nav-btn" onclick="showScreen('shop-screen')">商店</a>
+                    <a class="nav-btn" onclick="showScreen('wallet-screen')">钱包</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    // 显示指定页面
+    function showScreen(screenId) {
+        // 如果在预览模式，不切换页面
+        if (document.body.classList.contains('preview-mode')) {
+            return;
+        }
+        
+        // 隐藏所有页面
+        document.querySelectorAll('.screen').forEach(screen => {
+            screen.style.display = 'none';
+        });
+        
+        // 显示指定页面
+        document.getElementById(screenId).style.display = 'block';
+    }
+    
+    // 切换预览模式
+    function togglePreviewMode() {
+        const body = document.body;
+        const previewBtn = document.querySelector('.preview-mode-btn');
+        
+        if (body.classList.contains('preview-mode')) {
+            body.classList.remove('preview-mode');
+            previewBtn.textContent = '预览模式';
+            // 只显示登录页面
+            showScreen('login-screen');
+        } else {
+            body.classList.add('preview-mode');
+            previewBtn.textContent = '退出预览';
+        }
+    }
+    
+    // 增加孵化进度
+    function increaseHatchProgress() {
+        const progress = document.querySelector('#hatch-screen .progress');
+        let width = parseInt(progress.style.width || '45');
+        width += 10;
+        
+        if (width >= 100) {
+            width = 100;
+            alert('孵化成功！获得了一只新的怪兽！');
+            showScreen('collection-screen');
+        }
+        
+        progress.style.width = width + '%';
+        document.querySelector('#hatch-screen p:first-of-type').textContent = '孵化进度: ' + width + '%';
+        
+        // 更新剩余时间
+        const remainingHours = Math.floor((100 - width) / 10);
+        const remainingMinutes = Math.floor(((100 - width) % 10) * 6);
+        document.querySelector('#hatch-screen p:nth-of-type(2)').textContent = 
+            '预计剩余时间: ' + remainingHours + '小时' + remainingMinutes + '分钟';
+    }
+    
+    // 喂食怪兽
+    function feedMonster(foodType) {
+        const hungerBar = document.getElementById('hunger-bar');
+        const hungerLevel = document.getElementById('hunger-level');
+        let width = parseInt(hungerBar.style.width || '65');
+        
+        if (foodType === 'basic') {
+            width -= 10;
+        } else if (foodType === 'premium') {
+            width -= 25;
+        }
+        
+        if (width < 0) width = 0;
+        
+        hungerBar.style.width = width + '%';
+        hungerLevel.textContent = width;
+        
+        if (width === 0) {
+            alert('怪兽已经吃饱了！');
+        }
+    }
+    
+    // 训练怪兽
+    function trainMonster(type) {
+        const progress = document.getElementById('train-progress');
+        let width = parseInt(progress.style.width || '0');
+        
+        // 模拟训练进度
+        const interval = setInterval(() => {
+            width += 5;
+            progress.style.width = width + '%';
+            
+            if (width >= 100) {
+                clearInterval(interval);
+                alert('训练完成！' + type + '属性提升了！');
+                progress.style.width = '0%';
+            }
+        }, 200);
+    }
+    
+    // 显示进化弹窗
+    function showEvolutionModal() {
+        alert('进化失败！您的怪兽缺少进化石，无法进化。请前往商店购买进化石。');
+        showScreen('shop-screen');
+    }
+    
+    // 完成鉴定
+    function completeIdentification() {
+        const progress = document.getElementById('identify-progress');
+        progress.style.width = '100%';
+        
+        document.getElementById('identify-result').innerHTML = `
+            <p><strong>鉴定完成:</strong></p>
+            <p>稀有度: ★★★★☆</p>
+            <p>属性: 暗影系</p>
+            <p>潜力: 极高</p>
+            <p>特殊能力: 夜视</p>
+        `;
+        
+        alert('鉴定完成！这是一只稀有的暗影系怪兽！');
+    }
+    
+    // 攻击
+    function attack(type) {
+        const myHp = document.getElementById('my-hp');
+        const enemyHp = document.getElementById('enemy-hp');
+        const battleLog = document.getElementById('battle-log');
+        
+        let myHpValue = parseInt(myHp.style.width || '100');
+        let enemyHpValue = parseInt(enemyHp.style.width || '100');
+        
+        // 我方攻击
+        let damage = 0;
+        if (type === 'normal') {
+            damage = Math.floor(Math.random() * 15) + 5;
+            battleLog.innerHTML += `<p>你使用了普通攻击，造成了${damage}点伤害！</p>`;
+        } else if (type === 'special') {
+            damage = Math.floor(Math.random() * 25) + 10;
+            battleLog.innerHTML += `<p>你使用了特殊攻击，造成了${damage}点伤害！</p>`;
+        } else if (type === 'defense') {
+            battleLog.innerHTML += `<p>你选择了防御姿态，受到的伤害减少！</p>`;
+        }
+        
+        enemyHpValue -= damage;
+        if (enemyHpValue < 0) enemyHpValue = 0;
+        enemyHp.style.width = enemyHpValue + '%';
+        
+        // 检查敌方是否战败
+        if (enemyHpValue <= 0) {
+            battleLog.innerHTML += `<p>恭喜！你赢得了战斗！</p>`;
+            setTimeout(() => {
+                alert('战斗胜利！获得了20经验值和15像素币！');
+                showScreen('home-screen');
+            }, 1000);
+            return;
+        }
+        
+        // 敌方反击
+        setTimeout(() => {
+            let enemyDamage = Math.floor(Math.random() * 15) + 5;
+            
+            if (type === 'defense') {
+                enemyDamage = Math.floor(enemyDamage / 2);
+            }
+            
+            battleLog.innerHTML += `<p>敌方怪兽发动攻击，造成了${enemyDamage}点伤害！</p>`;
+            
+            myHpValue -= enemyDamage;
+            if (myHpValue < 0) myHpValue = 0;
+            myHp.style.width = myHpValue + '%';
+            
+            // 检查我方是否战败
+            if (myHpValue <= 0) {
+                battleLog.innerHTML += `<p>你的怪兽战败了！</p>`;
+                setTimeout(() => {
+                    alert('战斗失败！请训练提升实力后再来挑战！');
+                    showScreen('home-screen');
+                }, 1000);
+            }
+            
+            // 自动滚动到日志底部
+            battleLog.scrollTop = battleLog.scrollHeight;
+        }, 500);
+        
+        // 自动滚动到日志底部
+        battleLog.scrollTop = battleLog.scrollHeight;
+    }
+    
+    // 显示钱包连接模态框
+    function showWalletConnectModal() {
+        document.getElementById('wallet-connect-modal').style.display = 'flex';
+    }
+    
+    // 关闭模态框
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+    
+    // 连接钱包
+    function connectWallet(walletType) {
+        // 模拟连接钱包
+        closeModal('wallet-connect-modal');
+        
+        // 显示连接中的提示
+        alert('正在连接' + walletType + '钱包...');
+        
+        // 模拟连接成功
+        setTimeout(() => {
+            alert('钱包连接成功！');
+            showScreen('collection-screen'); // 修改为直接进入收藏页面
+            
+            // 更新钱包地址显示
+            document.getElementById('wallet-address').textContent = '0x71C...F3E2';
+            
+            // 更新余额显示
+            updateBalances();
+        }, 1000);
+    }
+    
+    // 更新余额显示
+    function updateBalances() {
+        const ethBalance = '0.05';
+        const pixelBalance = '150';
+        
+        document.getElementById('eth-balance').textContent = ethBalance;
+        document.getElementById('pixel-coin-balance').textContent = pixelBalance;
+        document.getElementById('wallet-eth-balance').textContent = ethBalance;
+        document.getElementById('wallet-pixel-balance').textContent = pixelBalance;
+    }
+    
+    // 复制钱包地址
+    function copyWalletAddress() {
+        const address = document.getElementById('wallet-address').textContent;
+        navigator.clipboard.writeText(address).then(() => {
+            alert('钱包地址已复制到剪贴板！');
+        });
+    }
+    
+    // 选择铸造选项
+    function selectMintOption(option) {
+        // 重置所有选项的样式
+        document.getElementById('random-mint').style.border = '1px solid #ddd';
+        document.getElementById('premium-mint').style.border = '1px solid #ddd';
+        
+        // 设置选中选项的样式
+        document.getElementById(option + '-mint').style.border = '2px solid #333';
+        
+        // 更新价格
+        updateMintPrice(option);
+    }
+    
+    // 更新铸造价格
+    function updateMintPrice(option) {
+        const amount = parseInt(document.getElementById('mint-amount').textContent);
+        let unitPrice = option === 'random' ? 0.01 : 0.05;
+        let totalPrice = (unitPrice * amount).toFixed(2);
+        
+        document.getElementById('mint-total-price').textContent = totalPrice;
+    }
+    
+    // 增加铸造数量
+    function increaseMintAmount() {
+        const amountElement = document.getElementById('mint-amount');
+        let amount = parseInt(amountElement.textContent);
+        
+        if (amount < 10) {
+            amount++;
+            amountElement.textContent = amount;
+            
+            // 更新总价
+            const option = document.getElementById('random-mint').style.border.includes('2px') ? 'random' : 'premium';
+            updateMintPrice(option);
+        }
+    }
+    
+    // 减少铸造数量
+    function decreaseMintAmount() {
+        const amountElement = document.getElementById('mint-amount');
+        let amount = parseInt(amountElement.textContent);
+        
+        if (amount > 1) {
+            amount--;
+            amountElement.textContent = amount;
+            
+            // 更新总价
+            const option = document.getElementById('random-mint').style.border.includes('2px') ? 'random' : 'premium';
+            updateMintPrice(option);
+        }
+    }
+    
+    // 开始铸造过程
+    function startMintProcess() {
+        const totalPrice = document.getElementById('mint-total-price').textContent;
+        const amount = document.getElementById('mint-amount').textContent;
+        
+        // 确认铸造
+        if (confirm(`确认铸造 ${amount} 个怪兽 NFT，总价 ${totalPrice} ETH？`)) {
+            showScreen('minting-screen');
+            
+            // 模拟铸造进度
+            let progress = 0;
+            let confirmations = 0;
+            
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                document.getElementById('mint-progress').style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    
+                    // 模拟区块确认
+                    const confirmationInterval = setInterval(() => {
+                        confirmations++;
+                        document.getElementById('confirmation-count').textContent = confirmations;
+                        
+                        if (confirmations >= 3) {
+                            clearInterval(confirmationInterval);
+                            
+                            // 显示铸造成功页面
+                            setTimeout(() => {
+                                showScreen('mint-success-screen');
+                                
+                                // 更新余额
+                                const ethBalance = document.getElementById('wallet-eth-balance').textContent;
+                                const newBalance = (parseFloat(ethBalance) - parseFloat(totalPrice)).toFixed(2);
+                                document.getElementById('wallet-eth-balance').textContent = newBalance;
+                                document.getElementById('eth-balance').textContent = newBalance;
+                            }, 500);
+                        }
+                    }, 1000);
+                }
+            }, 300);
+        }
+    }
+    
+    // 选择怪兽
+    function selectMonster(monsterId) {
+        // 保存当前选中的怪兽ID
+        window.currentMonster = monsterId;
+        
+        // 根据怪兽ID更新主页显示
+        if (monsterId === 'pixel-monster') {
+            document.querySelector('#home-screen .monster-display svg g').innerHTML = `
+                <rect x="96" y="96" width="64" height="64" fill="#333333" />
+                <rect x="112" y="112" width="16" height="16" fill="white" />
+                <rect x="128" y="112" width="16" height="16" fill="white" />
+                <rect x="116" y="116" width="8" height="8" fill="black" />
+                <rect x="132" y="116" width="8" height="8" fill="black" />
+                <rect x="120" y="136" width="16" height="8" fill="white" />
+            `;
+            document.querySelector('#home-screen .screen-content div:nth-of-type(2)').innerHTML = `
+                <p><strong>怪兽名称:</strong> 像素兽</p>
+                <p><strong>等级:</strong> 1</p>
+                <p><strong>状态:</strong> 健康</p>
+            `;
+        } else if (monsterId === 'rare-monster') {
+            document.querySelector('#home-screen .monster-display svg g').innerHTML = `
+                <rect x="88" y="80" width="80" height="72" fill="#222222" />
+                <rect x="104" y="96" width="24" height="16" fill="white" />
+                <rect x="128" y="96" width="24" height="16" fill="white" />
+                <rect x="112" y="100" width="8" height="8" fill="black" />
+                <rect x="136" y="100" width="8" height="8" fill="black" />
+                <rect x="112" y="120" width="32" height="8" fill="white" />
+            `;
+            document.querySelector('#home-screen .screen-content div:nth-of-type(2)').innerHTML = `
+                <p><strong>怪兽名称:</strong> 稀有兽</p>
+                <p><strong>等级:</strong> 2</p>
+                <p><strong>状态:</strong> 健康</p>
+            `;
+        }
+        
+        // 显示主页
+        showScreen('home-screen');
+    }
+    
+    // 初始化显示登录页面
+    window.onload = function() {
+        showScreen('login-screen');
+    };
+</script>
+</html>
+
