@@ -12,11 +12,13 @@
 ## 🚀 快速開始
 
 1. 複製專案：
+
 ```bash
 git clone https://github.com/你的使用者名稱/Pixel_monster_open.git
 ```
 
 2. 開啟專案：
+
 - 直接雙擊 `Pixel_monster.html` 檔案在瀏覽器中開啟
 - 或使用本地伺服器執行專案
 
@@ -54,7 +56,7 @@ git clone https://github.com/你的使用者名稱/Pixel_monster_open.git
 如果你有任何問題或建議，歡迎通過以下方式聯絡：
 
 - 提交 Issue
-- 發送郵件至：[你的郵箱]
+- 發送郵件至：jambo159.9coder@gmail.com
 
 ## 🙏 致謝
 
@@ -62,4 +64,4 @@ git clone https://github.com/你的使用者名稱/Pixel_monster_open.git
 
 ---
 
-Made with ❤️ by [你的名字] 
+Made with ❤️ by Jambo
